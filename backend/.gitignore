@@ -1,6 +1,13 @@
+# Build results
 bin/
 obj/
+
 /packages/
+
+# IDE's
 riderModule.iml
 /_ReSharper.Caches/
 .idea/
+
+# Database files
+*.db
