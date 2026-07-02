@@ -34,7 +34,8 @@ namespace backend.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<decimal>("Weight")
-                        .HasColumnType("decimal(65,30)");
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
 
                     b.HasKey("Id");
 
