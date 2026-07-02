@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 namespace backend.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/bodyweights")]
 public class BodyWeightController(AppDbContext context) : ControllerBase
 {
-    // GET: /BodyWeight
-    [HttpGet(Name = "GetBodyWeight")]
+    // GET: /api/bodyweights
+    [HttpGet]
     public async Task<ActionResult<IEnumerable<BodyWeight>>> Get()
     {
         var records = await context.BodyWeights
@@ -20,22 +20,19 @@ public class BodyWeightController(AppDbContext context) : ControllerBase
         return Ok(records);
     }
 
-    // GET: /BodyWeight/5
-    [HttpGet("{id}", Name = "GetBodyWeightById")]
+    // GET: /api/bodyweights/{id}
+    [HttpGet("{id}")]
     public async Task<ActionResult<BodyWeight>> GetById(int id)
     {
         var record = await context.BodyWeights.FindAsync(id);
 
-        if (record is null)
-        {
-            return NotFound();
-        }
+        if (record is null) return NotFound();
 
         return Ok(record);
     }
 
-    // POST: /BodyWeight
-    [HttpPost(Name = "CreateBodyWeight")]
+    // POST: /api/bodyweights
+    [HttpPost]
     public async Task<ActionResult<BodyWeight>> CreateBodyWeight(BodyWeight bodyWeight)
     {
         context.BodyWeights.Add(bodyWeight);
@@ -44,17 +41,14 @@ public class BodyWeightController(AppDbContext context) : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = bodyWeight.Id }, bodyWeight);
     }
 
-    // DELETE: /BodyWeight/5
-    [HttpDelete("{id:int}", Name = "DeleteBodyWeight")]
+    // DELETE: /api/bodyweights/5
+    [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
         var record = await context.BodyWeights.FindAsync(id);
 
-        if (record is null)
-        {
-            return NotFound();
-        }
-
+        if (record is null) return NotFound();
+        
         context.BodyWeights.Remove(record);
         await context.SaveChangesAsync();
 
