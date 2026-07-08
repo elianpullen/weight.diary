@@ -1,4 +1,5 @@
 import {getBodyWeights} from "@/lib/api/bodyWeight";
+import Link from "next/link";
 
 export default async function BodyWeightPage() {
     const data = await getBodyWeights();
@@ -25,10 +26,16 @@ export default async function BodyWeightPage() {
                         <td className="px-6 py-4">{bodyweight.weight}</td>
                         <td className="px-6 py-4">{bodyweight.date}</td>
                         <td className="px-6 py-4">
-                            <a href="/bodyweight/edit/{bodyweight.id}"
-                               className="font-medium p-1 text-fg-brand hover:underline">Edit</a>
-                            <a href="/bodyweight/delete/{bodyweight.id}"
-                               className="font-medium p-1 text-fg-brand hover:underline">Delete</a>
+                            <Link
+                                href={`/bodyweight/${bodyweight.id}/edit`}
+                                className="font-medium p-1 text-fg-brand hover:underline">
+                                Edit
+                            </Link>
+                            <Link
+                                href={`/bodyweight/${bodyweight.id}/delete`}
+                                className="font-medium p-1 text-fg-brand hover:underline">
+                                Delete
+                            </Link>
                         </td>
                     </tr>
                 ))}

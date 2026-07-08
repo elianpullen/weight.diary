@@ -1,4 +1,5 @@
 import {API_BASE_URL} from "./config";
+import {redirect} from "next/navigation";
 
 export type BodyWeight = {
     id: number;
@@ -26,7 +27,7 @@ export async function getBodyWeights(): Promise<BodyWeight[]> {
     }));
 }
 
-export async function createBodyWeight(bodyWeight: { date: string; weight: number }): Promise<BodyWeight> {
+export async function createBodyWeight(bodyWeight: { date: string; weight: number }): Promise<void> {
     const res = await fetch(`${API_BASE_URL}/api/bodyweights`, {
         method: "POST",
         headers: {
@@ -34,8 +35,21 @@ export async function createBodyWeight(bodyWeight: { date: string; weight: numbe
         },
         body: JSON.stringify(bodyWeight),
     });
-    
+
     if (!res.ok) throw new Error(`Failed to create bodyweight: ${res.status}`);
 
-    return res.json();
+    return redirect('/bodyweight');
+}
+
+export async function deleteBodyWeight(id: string): Promise<void> {
+    const res = await fetch(`${API_BASE_URL}/api/bodyweights/${id}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+
+    if (!res.ok) throw new Error(`Failed to delete bodyweight: ${res.status}`);
+
+    return redirect('/bodyweight');
 }

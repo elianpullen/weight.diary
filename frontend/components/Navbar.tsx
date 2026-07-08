@@ -7,8 +7,8 @@ export default function Navbar() {
 
             <div className="flex gap-6">
                 <Link href="/">Home</Link>
-                <Link href="/bodyweight">Bodyweight Index</Link>
-                <Link href="/bodyweight/create">Bodyweight Create</Link>
+                <Link href="/bodyweight">Bodyweights</Link>
+                <Link href="/bodyweight/new">New Bodyweight</Link>
             </div>
         </nav>
     );
