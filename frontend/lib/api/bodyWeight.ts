@@ -12,7 +12,7 @@ export async function getBodyWeights(): Promise<BodyWeight[]> {
     });
 
     if (!res.ok) throw new Error(`Failed to fetch bodyweights: ${res.status}`);
-    
+
     const data = await res.json();
 
     return data.map((item: BodyWeight) => ({
@@ -24,4 +24,18 @@ export async function getBodyWeights(): Promise<BodyWeight[]> {
             year: "numeric",
         }),
     }));
+}
+
+export async function createBodyWeight(bodyWeight: { date: string; weight: number }): Promise<BodyWeight> {
+    const res = await fetch(`${API_BASE_URL}/api/bodyweights`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bodyWeight),
+    });
+    
+    if (!res.ok) throw new Error(`Failed to create bodyweight: ${res.status}`);
+
+    return res.json();
 }

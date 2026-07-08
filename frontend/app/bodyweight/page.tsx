@@ -24,8 +24,11 @@ export default async function BodyWeightPage() {
                         </th>
                         <td className="px-6 py-4">{bodyweight.weight}</td>
                         <td className="px-6 py-4">{bodyweight.date}</td>
-                        <td className="px-6 py-4"><a href="#"
-                                                     className="font-medium text-fg-brand hover:underline">Edit</a>
+                        <td className="px-6 py-4">
+                            <a href="/bodyweight/edit/{bodyweight.id}"
+                               className="font-medium p-1 text-fg-brand hover:underline">Edit</a>
+                            <a href="/bodyweight/delete/{bodyweight.id}"
+                               className="font-medium p-1 text-fg-brand hover:underline">Delete</a>
                         </td>
                     </tr>
                 ))}
