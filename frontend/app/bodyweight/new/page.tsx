@@ -18,7 +18,7 @@ export default function MyDatePicker() {
         }
 
         await createBodyWeight({
-            date: date.toISOString().split("T")[0], // 2026-07-08
+            date: date.toISOString().split("T")[0], // year-month-day
             weight: Number(bodyweight),
         });
     }
@@ -32,6 +32,7 @@ export default function MyDatePicker() {
                     mode="single"
                     selected={date}
                     onSelect={setDate}
+                    timeZone="Europe/Amsterdam"
                 />
 
                 <p className="mt-2 text-sm text-gray-500">
