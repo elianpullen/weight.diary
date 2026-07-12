@@ -21,7 +21,7 @@ public class BodyWeightController(AppDbContext context) : ControllerBase
     }
 
     // GET: /api/bodyweights/{id}
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<ActionResult<BodyWeight>> GetById(int id)
     {
         var record = await context.BodyWeights.FindAsync(id);
@@ -29,6 +29,26 @@ public class BodyWeightController(AppDbContext context) : ControllerBase
         if (record is null) return NotFound();
 
         return Ok(record);
+    }
+
+    // PUT /api/bodyweights/{id}
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> UpdateBodyWeight(
+        int id,
+        [FromBody] BodyWeight bodyWeight)
+    {
+        if (id != bodyWeight.Id) return BadRequest();
+
+        var record = await context.BodyWeights.FindAsync(id);
+
+        if (record is null) return NotFound();
+
+        record.Date = bodyWeight.Date;
+        record.Weight = bodyWeight.Weight;
+
+        await context.SaveChangesAsync();
+
+        return NoContent();
     }
 
     // POST: /api/bodyweights
@@ -48,7 +68,7 @@ public class BodyWeightController(AppDbContext context) : ControllerBase
         var record = await context.BodyWeights.FindAsync(id);
 
         if (record is null) return NotFound();
-        
+
         context.BodyWeights.Remove(record);
         await context.SaveChangesAsync();
 
