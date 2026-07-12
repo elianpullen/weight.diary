@@ -41,6 +41,24 @@ export async function createBodyWeight(bodyWeight: { date: string; weight: numbe
     return redirect('/bodyweight');
 }
 
+export async function getBodyWeight(id: number) {
+    const res = await fetch(`${API_BASE_URL}/api/bodyweights/${id}`);
+    return res.json();
+}
+
+export async function updateBodyWeight(
+    id: number,
+    bodyWeight: { date: string; weight: number }
+) {
+    await fetch(`${API_BASE_URL}/api/bodyweights/${id}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bodyWeight),
+    });
+}
+
 export async function deleteBodyWeight(id: string): Promise<void> {
     const res = await fetch(`${API_BASE_URL}/api/bodyweights/${id}`, {
         method: "DELETE",
