@@ -36,6 +36,8 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseExceptionHandler("/error");
+
 app.UseCors("Frontend");
 
 app.UseHttpsRedirection();
