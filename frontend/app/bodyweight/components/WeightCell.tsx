@@ -2,7 +2,7 @@
 
 import {useState} from "react";
 import Link from "next/link";
-import {BodyWeight} from "@/lib/api/bodyWeight";
+import {BodyWeight} from "@/models/bodyWeight";
 
 export default function WeightCell({entry}: { entry: BodyWeight }) {
     const [open, setOpen] = useState(false);

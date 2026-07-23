@@ -1,6 +1,6 @@
 import {getBodyWeights} from "@/lib/api/bodyWeight";
 import Link from "next/link";
-import {BodyWeight} from "@/lib/api/bodyWeight";
+import {BodyWeight} from "@/models/bodyWeight";
 import WeightCell from "./components/WeightCell";
 
 const DAYS = ["Ma", "Di", "Wo", "Do", "Vr", "Za", "Zo"];

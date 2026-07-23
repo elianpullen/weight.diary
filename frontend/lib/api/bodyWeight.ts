@@ -1,13 +1,8 @@
 import {API_BASE_URL} from "./config";
 import {redirect} from "next/navigation";
+import {BodyWeight} from "@/models/bodyWeight";
 
-export type BodyWeight = {
-    id: number;
-    date: string;
-    weight: string;
-};
-
-async function handleApiError(res: Response) {
+async function throwApiError(res: Response) {
     const error = await res.json().catch(() => null);
 
     if (error?.error) {
@@ -23,7 +18,7 @@ export async function getBodyWeights(): Promise<BodyWeight[]> {
     });
 
     if (!res.ok) {
-        await handleApiError(res);
+        await throwApiError(res);
     }
 
     const data = await res.json();
@@ -49,7 +44,7 @@ export async function createBodyWeight(bodyWeight: { date: string; weight: numbe
     });
 
     if (!res.ok) {
-        await handleApiError(res);
+        await throwApiError(res);
     }
 
     return redirect('/bodyweight');
@@ -57,12 +52,17 @@ export async function createBodyWeight(bodyWeight: { date: string; weight: numbe
 
 export async function getBodyWeight(id: number) {
     const res = await fetch(`${API_BASE_URL}/api/bodyweights/${id}`);
+
+    if (!res.ok) {
+        await throwApiError(res);
+    }
+
     return res.json();
 }
 
 export async function updateBodyWeight(
     id: number,
-    bodyWeight: { date: string; weight: number }
+    bodyWeight: { weight: number }
 ) {
     const res = await fetch(`${API_BASE_URL}/api/bodyweights/${id}`, {
         method: "PUT",
@@ -73,7 +73,7 @@ export async function updateBodyWeight(
     });
 
     if (!res.ok) {
-        await handleApiError(res);
+        await throwApiError(res);
     }
 
     return redirect('/bodyweight');
@@ -88,7 +88,7 @@ export async function deleteBodyWeight(id: string): Promise<void> {
     });
 
     if (!res.ok) {
-        await handleApiError(res);
+        await throwApiError(res);
     }
 
     return redirect('/bodyweight');
