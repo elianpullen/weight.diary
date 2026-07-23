@@ -57,6 +57,7 @@ export async function updateBodyWeight(
         },
         body: JSON.stringify(bodyWeight),
     });
+    return redirect('/bodyweight');
 }
 
 export async function deleteBodyWeight(id: string): Promise<void> {
