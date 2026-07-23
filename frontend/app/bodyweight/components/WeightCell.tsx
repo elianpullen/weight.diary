@@ -2,12 +2,7 @@
 
 import {useState} from "react";
 import Link from "next/link";
-
-export type BodyWeight = {
-    id: string | number;
-    date: string; // ISO date string
-    weight: number;
-};
+import {BodyWeight} from "@/lib/api/bodyWeight";
 
 export default function WeightCell({entry}: { entry: BodyWeight }) {
     const [open, setOpen] = useState(false);

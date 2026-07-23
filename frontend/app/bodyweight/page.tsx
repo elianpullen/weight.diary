@@ -1,6 +1,7 @@
 import {getBodyWeights} from "@/lib/api/bodyWeight";
 import Link from "next/link";
-import WeightCell, {type BodyWeight} from "./components/WeightCell";
+import {BodyWeight} from "@/lib/api/bodyWeight";
+import WeightCell from "./components/WeightCell";
 
 const DAYS = ["Ma", "Di", "Wo", "Do", "Vr", "Za", "Zo"];
 
@@ -20,11 +21,6 @@ function getDayIndex(date: Date): number {
 export default async function BodyWeightPage() {
     const raw: BodyWeight[] = await getBodyWeights();
     const data = raw.filter((entry) => !isNaN(new Date(entry.date).getTime()));
-
-    const sorted = [...data].sort(
-        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-    );
-    const latest = sorted[0];
 
     const weekMap = new Map<number, Map<number, BodyWeight>>();
     for (const entry of data) {
@@ -54,46 +50,16 @@ export default async function BodyWeightPage() {
 
     return (
         <div className="mx-auto max-w-md space-y-6 p-4">
-            <h1 className="text-xl font-bold">Bodyweights in KG</h1>
-
-            <div className="flex items-start gap-4">
-                {latest ? (
-                    <div
-                        className="flex-1 space-y-2 rounded-lg border border-gray-300 p-4 transition-all duration-150 hover:-translate-y-0.5 hover:border-fuchsia-400 hover:shadow-md">
-                        <div className="text-lg font-bold">{latest.weight} kg</div>
-                        <div className="text-sm text-gray-500">
-                            {new Date(latest.date).toLocaleDateString("nl-NL")}
-                        </div>
-                        <div className="flex gap-2 pt-2">
-                            <Link
-                                href={`/bodyweight/${latest.id}/edit`}
-                                className="rounded-sm bg-gray-300 px-2 py-1 text-xs font-bold text-gray-800 hover:bg-gray-400"
-                            >
-                                EDIT
-                            </Link>
-                            <Link
-                                href={`/bodyweight/${latest.id}/delete`}
-                                className="rounded-sm bg-gray-300 px-2 py-1 text-xs font-bold text-gray-800 hover:bg-gray-400"
-                            >
-                                DELETE
-                            </Link>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="flex-1 rounded-lg border border-dashed border-gray-300 p-4 text-sm text-gray-400">
-                        Nog geen metingen
-                    </div>
-                )}
+            <div className="flex items-center gap-3">
+                <h1 className="text-xl font-bold">Bodyweights in KG</h1>
 
                 <Link
                     href="/bodyweight/new"
-                    className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-gray-300 text-2xl font-bold"
-                >
+                    className="flex h-12 w-12 items-center justify-center rounded-lg border border-gray-300 text-2xl font-bold">
                     +
                 </Link>
             </div>
 
-            {/* Grid i.p.v. table, zodat popups niet door volgende rijen verborgen worden */}
             <div className="rounded-lg border border-gray-300 p-2">
                 <div className="grid gap-y-1" style={{gridTemplateColumns: gridCols}}>
                     {/* Header */}

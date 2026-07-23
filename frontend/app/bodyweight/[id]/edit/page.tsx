@@ -1,10 +1,9 @@
 "use client";
 
 import React, {useEffect, useState} from "react";
-import {DayPicker} from "react-day-picker";
 import "react-day-picker/style.css";
-
 import {getBodyWeight, updateBodyWeight} from "@/lib/api/bodyWeight";
+import DateSelector from "@/app/bodyweight/components/DateSelector";
 
 type Props = {
     params: Promise<{
@@ -16,7 +15,6 @@ export default function EditPage({params}: Props) {
     const [date, setDate] = useState<Date>();
     const [bodyweight, setBodyweight] = useState("");
     const [loading, setLoading] = useState(true);
-
 
     useEffect(() => {
         async function load() {
@@ -40,43 +38,48 @@ export default function EditPage({params}: Props) {
     async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
 
-        if (!date) return;
+        if (!date) {
+            alert("Select a date.");
+            return;
+        }
 
         const {id} = await params;
 
         await updateBodyWeight(Number(id), {
-            date: date.toISOString().split("T")[0],
+            date: date.toISOString().split("T")[0], // year-month-day
             weight: Number(bodyweight),
         });
-
-        alert("Bodyweight updated!");
     }
 
     if (loading) return <p>Loading ...</p>;
 
     return (
-        <form
-            onSubmit={handleSubmit}
-            className="flex max-w-sm flex-col gap-6">
-            <DayPicker
-                mode="single"
-                selected={date}
-                onSelect={setDate}
-                timeZone={"Europe/Amsterdam"}
-            />
+        <div className="mx-auto max-w-md space-y-6 p-4">
 
-            <input
-                type="number"
-                step="0.1"
-                value={bodyweight}
-                onChange={(e) => setBodyweight(e.target.value)}
-                className="rounded border px-3 py-2"/>
+            <form
+                onSubmit={handleSubmit}
+                className="flex flex-col gap-6 max-w-sm">
 
-            <button
-                type="submit"
-                className="rounded bg-blue-600 px-4 py-2 text-white">
-                Save
-            </button>
-        </form>
+                <DateSelector date={date} setDate={setDate}/>
+
+                <input
+                    id="bodyweight"
+                    type="number"
+                    step="0.1"
+                    min="0.1"
+                    max="500"
+                    value={bodyweight}
+                    onChange={(e) => setBodyweight(e.target.value)}
+                    className="w-full rounded border px-3 py-2"
+                    required
+                />
+                
+                <button
+                    type="submit"
+                    className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
+                    Update
+                </button>
+            </form>
+        </div>
     );
 }

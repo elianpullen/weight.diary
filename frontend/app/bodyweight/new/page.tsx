@@ -1,9 +1,9 @@
 "use client";
 
 import React, {useState} from "react";
-import {DayPicker} from "react-day-picker";
 import "react-day-picker/style.css";
 import {createBodyWeight} from "@/lib/api/bodyWeight";
+import DateSelector from "@/app/bodyweight/components/DateSelector";
 
 export default function MyDatePicker() {
     const [date, setDate] = useState<Date>();
@@ -24,50 +24,41 @@ export default function MyDatePicker() {
     }
 
     return (
-        <form
-            onSubmit={handleSubmit}
-            className="flex flex-col gap-6 max-w-sm">
-            <div>
-                <DayPicker
-                    mode="single"
-                    selected={date}
-                    onSelect={setDate}
-                    timeZone="Europe/Amsterdam"
-                />
+        <div className="mx-auto max-w-md space-y-6 p-4">
 
-                <p className="mt-2 text-sm text-gray-500">
-                    {date
-                        ? `Selected: ${date.toLocaleDateString()}`
-                        : "Choose a date."}
-                </p>
-            </div>
+            <form
+                onSubmit={handleSubmit}
+                className="flex flex-col gap-6 max-w-sm">
 
-            <div>
-                <label
-                    htmlFor="bodyweight"
-                    className="block mb-2 font-medium">
-                    Bodyweight (kg)
-                </label>
+                <DateSelector date={date} setDate={setDate}/>
 
-                <input
-                    id="bodyweight"
-                    type="number"
-                    step="0.1"
-                    min="0.1"
-                    max="500"
-                    value={bodyweight}
-                    onChange={(e) => setBodyweight(e.target.value)}
-                    placeholder="88.8"
-                    className="w-full rounded border px-3 py-2"
-                    required
-                />
-            </div>
+                <div>
+                    <label
+                        htmlFor="bodyweight"
+                        className="block mb-2 font-medium">
+                        Bodyweight (kg)
+                    </label>
 
-            <button
-                type="submit"
-                className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
-                Create
-            </button>
-        </form>
+                    <input
+                        id="bodyweight"
+                        type="number"
+                        step="0.1"
+                        min="0.1"
+                        max="500"
+                        value={bodyweight}
+                        onChange={(e) => setBodyweight(e.target.value)}
+                        placeholder="88.8"
+                        className="w-full rounded border px-3 py-2"
+                        required
+                    />
+                </div>
+
+                <button
+                    type="submit"
+                    className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
+                    Create
+                </button>
+            </form>
+        </div>
     );
 }
