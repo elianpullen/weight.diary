@@ -7,12 +7,24 @@ export type BodyWeight = {
     weight: string;
 };
 
+async function handleApiError(res: Response) {
+    const error = await res.json().catch(() => null);
+
+    if (error?.error) {
+        throw new Error(error.error);
+    }
+
+    throw new Error(`API error: ${res.status}`);
+}
+
 export async function getBodyWeights(): Promise<BodyWeight[]> {
     const res = await fetch(`${API_BASE_URL}/api/bodyweights`, {
         cache: "no-store",
     });
 
-    if (!res.ok) throw new Error(`Failed to fetch bodyweights: ${res.status}`);
+    if (!res.ok) {
+        await handleApiError(res);
+    }
 
     const data = await res.json();
 
@@ -36,7 +48,9 @@ export async function createBodyWeight(bodyWeight: { date: string; weight: numbe
         body: JSON.stringify(bodyWeight),
     });
 
-    if (!res.ok) throw new Error(`Failed to create bodyweight: ${res.status}`);
+    if (!res.ok) {
+        await handleApiError(res);
+    }
 
     return redirect('/bodyweight');
 }
@@ -50,13 +64,18 @@ export async function updateBodyWeight(
     id: number,
     bodyWeight: { date: string; weight: number }
 ) {
-    await fetch(`${API_BASE_URL}/api/bodyweights/${id}`, {
+    const res = await fetch(`${API_BASE_URL}/api/bodyweights/${id}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
         },
         body: JSON.stringify(bodyWeight),
     });
+
+    if (!res.ok) {
+        await handleApiError(res);
+    }
+
     return redirect('/bodyweight');
 }
 
@@ -68,7 +87,9 @@ export async function deleteBodyWeight(id: string): Promise<void> {
         },
     });
 
-    if (!res.ok) throw new Error(`Failed to delete bodyweight: ${res.status}`);
+    if (!res.ok) {
+        await handleApiError(res);
+    }
 
     return redirect('/bodyweight');
 }
