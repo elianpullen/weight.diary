@@ -17,6 +17,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
             bodyweight.HasKey(b => b.Id);
 
+            bodyweight.HasIndex(b => b.Date)
+                .IsUnique();
+
             bodyweight.Property(b => b.Date)
                 .IsRequired();
 

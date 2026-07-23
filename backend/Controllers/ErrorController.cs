@@ -13,7 +13,17 @@ public class ErrorController : ControllerBase
             .Get<IExceptionHandlerFeature>()?
             .Error;
 
-        if (exception?.Message.Contains("Unknown database") == true)
+        var message = exception?.ToString();
+
+        if (message?.Contains("Duplicate entry") == true)
+        {
+            return StatusCode(409, new
+            {
+                error = "BODYWEIGHT_ALREADY_EXISTS"
+            });
+        }
+
+        if (message?.Contains("Unknown database") == true)
         {
             return StatusCode(500, new
             {
