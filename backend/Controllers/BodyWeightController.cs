@@ -37,13 +37,11 @@ public class BodyWeightController(AppDbContext context) : ControllerBase
         int id,
         [FromBody] BodyWeight bodyWeight)
     {
-        if (id != bodyWeight.Id) return BadRequest();
-
         var record = await context.BodyWeights.FindAsync(id);
 
         if (record is null) return NotFound();
+        if (bodyWeight.Weight <= 0) return BadRequest();
 
-        record.Date = bodyWeight.Date;
         record.Weight = bodyWeight.Weight;
 
         await context.SaveChangesAsync();
