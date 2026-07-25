@@ -19,8 +19,10 @@ function getDayIndex(date: Date): number {
 }
 
 export default async function BodyWeightPage() {
-    const raw: BodyWeight[] = await getBodyWeights();
-    const data = raw.filter((entry) => !isNaN(new Date(entry.date).getTime()));
+    const data = await getBodyWeights();
+
+    // const raw: BodyWeight[] = await getBodyWeights();
+    // const data = raw.filter((entry) => !isNaN(new Date(entry.date).getTime()));
 
     const weekMap = new Map<number, Map<number, BodyWeight>>();
     for (const entry of data) {
@@ -50,71 +52,105 @@ export default async function BodyWeightPage() {
 
     return (
         <div className="mx-auto max-w-md space-y-6 p-4">
-            <div className="flex items-center gap-3">
-                <h1 className="text-xl font-bold">Bodyweights in KG</h1>
+            <div className="bg-neutral-900 block max-w-sm p-6 border border-default rounded-xl shadow-xs">
 
-                <Link
-                    href="/bodyweight/new"
-                    className="flex h-12 w-12 items-center justify-center rounded-lg border border-gray-300 text-2xl font-bold">
-                    +
-                </Link>
+                <div className="flex items-center gap-3 tracking-tight text-heading leading-8">
+                    <h1 className="text-xl font-semibold">List of all bodyweights</h1>
+
+                    <Link
+                        href="/bodyweight/new"
+                        className="flex h-12 w-12 items-center justify-center rounded-lg border border-gray-300 text-2xl font-bold hover:bg-neutral-800">
+                        +
+                    </Link>
+                </div>
+
+                <table className="w-full text-sm text-left border-separate border-spacing-0">
+                    <thead>
+                    <tr>
+                        <th scope="col"
+                            className="px-6 py-3 font-medium text-xs uppercase tracking-wide text-neutral-500">Date
+                        </th>
+                        <th scope="col"
+                            className="px-6 py-3 font-medium text-xs uppercase tracking-wide text-neutral-500">Device
+                        </th>
+                        <th scope="col"
+                            className="px-6 py-3 font-medium text-xs uppercase tracking-wide text-neutral-500 text-right">Weight
+                        </th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {data.map((bodyweight, b) => (
+                        <tr key={b}>
+                            <td className="border-t border-neutral-800 px-6 py-2.5 text-neutral-200 whitespace-nowrap">
+                                {bodyweight.date}
+                            </td>
+                            <td className="border-t border-neutral-800 px-6 py-2.5 text-neutral-200">
+                                ...
+                            </td>
+                            <td className="border-t border-neutral-800 px-6 py-2.5 text-neutral-200 text-right whitespace-nowrap">
+                                {bodyweight.weight} kg
+                            </td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
             </div>
 
-            <div className="rounded-lg border border-gray-300 p-2">
-                <div className="grid gap-y-1" style={{gridTemplateColumns: gridCols}}>
-                    {/* Header */}
-                    <div/>
-                    {weeks.map((week) => (
-                        <div key={week} className="p-2 text-center font-mono text-sm font-bold">
-                            {week}
-                        </div>
-                    ))}
-
-                    {/* Dag-rijen */}
-                    {DAYS.map((label, dayIdx) => (
-                        <div key={label} className="contents">
-                            <div className="flex items-center p-2 font-mono text-sm font-bold">
-                                {label}
+            <div className="bg-neutral-900 block max-w-sm p-6 border border-default rounded-xl shadow-xs">
+                <div className="rounded-lg p-2">
+                    <div className="grid gap-y-1" style={{gridTemplateColumns: gridCols}}>
+                        <div/>
+                        {weeks.map((week) => (
+                            <div key={week} className="p-2 text-center font-mono text-sm text-neutral-500 font-bold">
+                                {week}
                             </div>
-                            {weeks.map((week) => {
-                                const entry = weekMap.get(week)?.get(dayIdx);
-                                return entry ? (
-                                    <WeightCell key={week} entry={entry}/>
-                                ) : (
-                                    <div key={week} className="flex items-center justify-center p-2">
-                                        <span className="font-mono text-sm text-gray-400">...</span>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    ))}
+                        ))}
 
-                    {/* AVG-rij */}
-                    <div className="flex items-center border-t-2 border-gray-300 p-2 font-mono text-sm font-bold">
-                        AVG
-                    </div>
-                    {weekAverages.map((avg, i) => (
+                        {DAYS.map((label, dayIdx) => (
+                            <div key={label} className="contents">
+                                <div
+                                    className="flex items-center p-2 font-mono text-sm uppercase text-neutral-500 font-bold">
+                                    {label}
+                                </div>
+                                {weeks.map((week) => {
+                                    const entry = weekMap.get(week)?.get(dayIdx);
+                                    return entry ? (
+                                        <WeightCell key={week} entry={entry}/>
+                                    ) : (
+                                        <div key={week} className="flex items-center justify-center p-2">
+                                            <span className="font-mono text-sm text-gray-400">...</span>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        ))}
+
                         <div
-                            key={i}
-                            className="flex items-center justify-center border-t-2 border-gray-300 p-2 font-mono text-sm font-bold"
-                        >
-                            {avg ?? "..."}
+                            className="flex items-center border-t-4 border-neutral-800 p-2 font-mono text-sm text-neutral-500 font-bold">AVG
                         </div>
-                    ))}
+                        {weekAverages.map((avg, i) => (
+                            <div
+                                key={i}
+                                className="flex items-center justify-center border-t-4 border-neutral-800 p-2 font-mono text-sm text-neutral-500 font-bold">
+                                {avg ?? "..."}
+                            </div>
+                        ))}
 
-                    {/* DIFF-rij */}
-                    <div className="flex items-center p-2 font-mono text-sm font-bold">DIFF</div>
-                    {weeks.map((week, i) => (
-                        <div key={week} className="flex items-center justify-center p-2 font-mono text-sm font-bold">
-                            {i === weeks.length - 1
-                                ? diff === null
-                                    ? "..."
-                                    : diff > 0
-                                        ? `+${diff}`
-                                        : diff
-                                : ""}
-                        </div>
-                    ))}
+                        <div className="flex items-center p-2 font-mono text-sm text-neutral-500 font-bold">DIFF</div>
+                        {weeks.map((week, i) => (
+                            <div key={week}
+                                 className="flex items-center justify-center p-2 font-mono text-sm text-neutral-500 font-bold">
+                                {i === weeks.length - 1
+                                    ? diff === null
+                                        ? "..."
+                                        : diff > 0
+                                            ? `+${diff}`
+                                            : diff
+                                    : ""}
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>
