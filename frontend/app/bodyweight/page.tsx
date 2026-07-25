@@ -59,7 +59,7 @@ export default async function BodyWeightPage() {
 
                     <Link
                         href="/bodyweight/new"
-                        className="flex h-12 w-12 items-center justify-center rounded-lg border border-gray-300 text-2xl font-bold hover:bg-neutral-800">
+                        className="ml-auto flex h-9 w-9 items-center justify-center rounded-lg text-2xl font-bold bg-green-600 hover:bg-green-700">
                         +
                     </Link>
                 </div>
