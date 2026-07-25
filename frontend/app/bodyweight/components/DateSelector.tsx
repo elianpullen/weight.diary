@@ -21,6 +21,7 @@ export default function DateSelector({date, setDate}: DayPickerFormProps) {
                 selected={date}
                 onSelect={setDate}
                 timeZone="Europe/Amsterdam"
+                weekStartsOn={1}
             />
 
             <button type="button" onClick={() => setMonth(today)}>

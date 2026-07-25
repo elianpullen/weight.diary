@@ -6,11 +6,15 @@ import WeightCell from "./components/WeightCell";
 const DAYS = ["Ma", "Di", "Wo", "Do", "Vr", "Za", "Zo"];
 
 function getISOWeek(date: Date): number {
-    const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-    const dayNum = d.getUTCDay() || 7;
-    d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-    return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+    const utcDate = new Date(date.toUTCString());
+
+    utcDate.setUTCDate(utcDate.getUTCDate() + 4 - utcDate.getUTCDay());
+
+    const yearStart = new Date(Date.UTC(utcDate.getUTCFullYear(), 0, 1));
+
+    return Math.ceil(
+        ((utcDate.getTime() - yearStart.getTime()) / 86400000 + 1) / 7
+    );
 }
 
 function getDayIndex(date: Date): number {
@@ -19,16 +23,20 @@ function getDayIndex(date: Date): number {
 }
 
 export default async function BodyWeightPage() {
-    const data = await getBodyWeights();
+    const raw: BodyWeight[] = await getBodyWeights();
 
-    // const raw: BodyWeight[] = await getBodyWeights();
-    // const data = raw.filter((entry) => !isNaN(new Date(entry.date).getTime()));
+    const data = raw.filter((entry) => !isNaN(new Date(entry.date).getTime()));
 
     const weekMap = new Map<number, Map<number, BodyWeight>>();
     for (const entry of data) {
-        const d = new Date(entry.date);
+        const day = entry.date.substring(0, 2);
+        const month = entry.date.substring(3, 5);
+        const year = entry.date.substring(6, 10);
+
+        const d = new Date(Number(year), Number(month) - 1, Number(day));
         const week = getISOWeek(d);
         const dayIdx = getDayIndex(d);
+
         if (!weekMap.has(week)) weekMap.set(week, new Map());
         weekMap.get(week)!.set(dayIdx, entry);
     }
