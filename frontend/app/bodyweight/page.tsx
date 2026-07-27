@@ -5,16 +5,22 @@ import WeightCell from "./components/WeightCell";
 
 const DAYS = ["Ma", "Di", "Wo", "Do", "Vr", "Za", "Zo"];
 
-function getISOWeek(date: Date): number {
-    const utcDate = new Date(date.toUTCString());
+function getISOWeekKey(date: Date): string {
+    const utcDate = new Date(Date.UTC(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate()
+    ));
 
     utcDate.setUTCDate(utcDate.getUTCDate() + 4 - utcDate.getUTCDay());
 
     const yearStart = new Date(Date.UTC(utcDate.getUTCFullYear(), 0, 1));
 
-    return Math.ceil(
-        ((utcDate.getTime() - yearStart.getTime()) / 86400000 + 1) / 7
+    const week = Math.ceil(
+        (((utcDate.getTime() - yearStart.getTime()) / 86400000) + 1) / 7
     );
+
+    return `${utcDate.getUTCFullYear()}-${week}`;
 }
 
 function getDayIndex(date: Date): number {
@@ -23,25 +29,25 @@ function getDayIndex(date: Date): number {
 }
 
 export default async function BodyWeightPage() {
-    const raw: BodyWeight[] = await getBodyWeights();
+    const data = await getBodyWeights();
 
-    const data = raw.filter((entry) => !isNaN(new Date(entry.date).getTime()));
-
-    const weekMap = new Map<number, Map<number, BodyWeight>>();
+    const weekMap = new Map<string, Map<number, BodyWeight>>();
     for (const entry of data) {
         const day = entry.date.substring(0, 2);
         const month = entry.date.substring(3, 5);
         const year = entry.date.substring(6, 10);
 
         const d = new Date(Number(year), Number(month) - 1, Number(day));
-        const week = getISOWeek(d);
+        const week = getISOWeekKey(d);
         const dayIdx = getDayIndex(d);
 
         if (!weekMap.has(week)) weekMap.set(week, new Map());
         weekMap.get(week)!.set(dayIdx, entry);
     }
 
-    const weeks = Array.from(weekMap.keys()).sort((a, b) => a - b).slice(-2);
+    const weeks = Array.from(weekMap.entries())
+        .map(([week]) => week)
+        .sort();
 
     const weekAverages = weeks.map((week) => {
         const entries = Array.from(weekMap.get(week)!.values());
@@ -50,10 +56,17 @@ export default async function BodyWeightPage() {
         return Math.round(avg * 10) / 10;
     });
 
-    const diff =
-        weekAverages.length === 2 && weekAverages[0] !== null && weekAverages[1] !== null
-            ? Math.round((weekAverages[1]! - weekAverages[0]!) * 10) / 10
-            : null;
+    const weekDiffs = weekAverages.map((avg, index) => {
+        if (
+            index === 0 ||
+            avg === null ||
+            weekAverages[index - 1] === null
+        ) {
+            return null;
+        }
+
+        return Math.round((avg - weekAverages[index - 1]!) * 10) / 10;
+    });
 
     // grid-template-columns: label kolom + 1 kolom per week
     const gridCols = `80px repeat(${weeks.length}, 1fr)`;
@@ -105,7 +118,8 @@ export default async function BodyWeightPage() {
                 </table>
             </div>
 
-            <div className="bg-neutral-900 block max-w-sm p-6 border border-default rounded-xl shadow-xs">
+            <div
+                className="bg-neutral-900 block max-w-sm p-6 border border-default rounded-xl shadow-xs overflow-scroll">
                 <div className="rounded-lg p-2">
                     <div className="grid gap-y-1" style={{gridTemplateColumns: gridCols}}>
                         <div/>
@@ -145,17 +159,19 @@ export default async function BodyWeightPage() {
                             </div>
                         ))}
 
-                        <div className="flex items-center p-2 font-mono text-sm text-neutral-500 font-bold">DIFF</div>
-                        {weeks.map((week, i) => (
-                            <div key={week}
-                                 className="flex items-center justify-center p-2 font-mono text-sm text-neutral-500 font-bold">
-                                {i === weeks.length - 1
-                                    ? diff === null
-                                        ? "..."
-                                        : diff > 0
-                                            ? `+${diff}`
-                                            : diff
-                                    : ""}
+                        <div className="flex items-center p-2 font-mono text-sm text-neutral-500 font-bold">
+                            DIFF
+                        </div>
+                        {weekDiffs.map((diff, i) => (
+                            <div
+                                key={weeks[i]}
+                                className="flex items-center justify-center p-2 font-mono text-sm text-neutral-500 font-bold"
+                            >
+                                {diff === null
+                                    ? ""
+                                    : diff > 0
+                                        ? `+${diff}`
+                                        : diff}
                             </div>
                         ))}
                     </div>
