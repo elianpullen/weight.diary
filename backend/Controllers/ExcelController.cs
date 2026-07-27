@@ -1,22 +1,19 @@
+using backend.Data;
+using backend.Models;
 using ClosedXML.Excel;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers;
 
 [ApiController]
 [Route("api/excel")]
-public class ExcelController : ControllerBase
+public class ExcelController(AppDbContext context) : ControllerBase
 {
-    private ILogger<ExcelController> _ilogger;
-
-    public ExcelController(ILogger<ExcelController> logger)
-    {
-        _ilogger = logger;
-    }
-
     // POST: /api/excel/readexcelformdata
     [HttpPost("readexcelformdata")]
-    public async Task<IActionResult> ReadExcelFrom_FormData(IFormFile file, CancellationToken cancellationToken)
+    public async Task<IActionResult> ReadExcelFrom_FormData(IFormFile file,
+        CancellationToken cancellationToken)
     {
         if (file == null || file.Length == 0) return BadRequest("File is empty.");
 
@@ -38,6 +35,7 @@ public class ExcelController : ControllerBase
                 foreach (var row in rows.Skip(1))
                 {
                     var rowData = new Dictionary<string, string>();
+
                     foreach (var cell in row.Cells())
                     {
                         var header = headers[cell.Address.ColumnNumber - 1];
@@ -45,7 +43,18 @@ public class ExcelController : ControllerBase
                     }
 
                     data.Add(rowData);
+
+                    var bodyWeight = new BodyWeight
+                    {
+                        Date = DateTime.Parse(rowData["date"]),
+                        Weight = decimal.Parse(rowData["weight"])
+                    };
+
+
+                    context.BodyWeights.Add(bodyWeight);
                 }
+
+                await context.SaveChangesAsync(cancellationToken);
             }
         }
 
