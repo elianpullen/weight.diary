@@ -56,8 +56,7 @@ export default async function BodyWeightPage() {
     const weekAverages = weeks.map((week) => {
         const entries = Array.from(weekMap.get(week)!.values());
         if (entries.length === 0) return null;
-        const avg = entries.reduce((sum, e) => sum + e.weight, 0) / entries.length;
-        return Math.round(avg * 10) / 10;
+        return entries.reduce((sum, e) => sum + e.weight, 0) / entries.length;
     });
 
     const weekDiffs = weekAverages.map((avg, index) => {
@@ -69,7 +68,8 @@ export default async function BodyWeightPage() {
             return null;
         }
 
-        return Math.round((avg - weekAverages[index - 1]!) * 10) / 10;
+        const diff = avg - weekAverages[index - 1]!;
+        return (Math.round(diff * 100) / 100).toFixed(2);
     });
 
     // grid-template-columns: label kolom + 1 kolom per week
@@ -159,7 +159,7 @@ export default async function BodyWeightPage() {
                             <div
                                 key={i}
                                 className="flex items-center justify-center border-t-4 border-neutral-800 p-2 font-mono text-sm text-neutral-500 font-bold">
-                                {avg ?? "..."}
+                                {avg !== null ? avg.toFixed(2) : "..."}
                             </div>
                         ))}
 
@@ -169,11 +169,10 @@ export default async function BodyWeightPage() {
                         {weekDiffs.map((diff, i) => (
                             <div
                                 key={weeks[i]}
-                                className="flex items-center justify-center p-2 font-mono text-sm text-neutral-500 font-bold"
-                            >
+                                className="flex items-center justify-center p-2 font-mono text-sm text-neutral-500 font-bold">
                                 {diff === null
                                     ? ""
-                                    : diff > 0
+                                    : Number(diff) > 0
                                         ? `+${diff}`
                                         : diff}
                             </div>
