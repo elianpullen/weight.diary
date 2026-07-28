@@ -12,7 +12,11 @@ function getISOWeekKey(date: Date): string {
         date.getDate()
     ));
 
-    utcDate.setUTCDate(utcDate.getUTCDate() + 4 - utcDate.getUTCDay());
+    const dayNumber = utcDate.getUTCDay() || 7;
+
+    utcDate.setUTCDate(
+        utcDate.getUTCDate() + 4 - dayNumber
+    );
 
     const yearStart = new Date(Date.UTC(utcDate.getUTCFullYear(), 0, 1));
 
