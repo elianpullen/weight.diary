@@ -2,6 +2,7 @@ import {getBodyWeights} from "@/lib/api/bodyWeight";
 import Link from "next/link";
 import {BodyWeight} from "@/models/bodyWeight";
 import WeightCell from "./components/WeightCell";
+import BodyWeightTable from "@/app/bodyweight/components/BodyWeightTable";
 
 const DAYS = ["Ma", "Di", "Wo", "Do", "Vr", "Za", "Zo"];
 
@@ -89,37 +90,7 @@ export default async function BodyWeightPage() {
                     </Link>
                 </div>
 
-                <table className="w-full text-sm text-left border-separate border-spacing-0">
-                    <thead>
-                    <tr>
-                        <th scope="col"
-                            className="px-6 py-3 font-medium text-xs uppercase tracking-wide text-neutral-500">Date
-                        </th>
-                        <th scope="col"
-                            className="px-6 py-3 font-medium text-xs uppercase tracking-wide text-neutral-500">Device
-                        </th>
-                        <th scope="col"
-                            className="px-6 py-3 font-medium text-xs uppercase tracking-wide text-neutral-500 text-right">Weight
-                        </th>
-                    </tr>
-                    </thead>
-
-                    <tbody>
-                    {data.map((bodyweight, b) => (
-                        <tr key={b}>
-                            <td className="border-t border-neutral-800 px-6 py-2.5 text-neutral-200 whitespace-nowrap">
-                                {bodyweight.date}
-                            </td>
-                            <td className="border-t border-neutral-800 px-6 py-2.5 text-neutral-200">
-                                ...
-                            </td>
-                            <td className="border-t border-neutral-800 px-6 py-2.5 text-neutral-200 text-right whitespace-nowrap">
-                                {bodyweight.weight} kg
-                            </td>
-                        </tr>
-                    ))}
-                    </tbody>
-                </table>
+                <BodyWeightTable data={data}/>
             </div>
 
             <div
