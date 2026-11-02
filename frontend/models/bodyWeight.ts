@@ -1,5 +1,5 @@
 export type BodyWeight = {
     id: number;
-    date: string;
+    date: Date;
     weight: number;
 };
