@@ -31,7 +31,7 @@ export default function WeightCell({entry}: { entry: BodyWeight }) {
                             {entry.weight} kg
                         </div>
                         <div className="text-xs text-gray-500">
-                            {entry.date}
+                            {entry.date.toLocaleDateString("NL")}
                         </div>
                         <div className="flex gap-2 pt-1">
                             <Link

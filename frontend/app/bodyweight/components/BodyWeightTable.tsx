@@ -2,6 +2,7 @@
 
 import {useState} from "react";
 import {BodyWeight} from "@/models/bodyWeight";
+import {getISOWeekKey} from "@/app/bodyweight/utils/dateUtils";
 
 const PAGE_SIZE = 10;
 
@@ -10,14 +11,18 @@ export default function BodyWeightTable({data}: {
 }) {
     const [currentPage, setCurrentPage] = useState(1);
 
-    const totalPages = Math.ceil(data.length / PAGE_SIZE);
+    const bodyweights = data.map(item => ({
+        ...item,
+        date: new Date(item.date)
+    }));
 
+    const totalPages = Math.ceil(data.length / PAGE_SIZE);
     const startIndex = (currentPage - 1) * PAGE_SIZE;
-    const paginatedData = data.slice(
+    const paginatedData = bodyweights.slice(
         startIndex,
         startIndex + PAGE_SIZE
     );
-
+    
     return (
         <div>
             <table className="w-full text-sm text-left border-separate border-spacing-0">
@@ -26,6 +31,9 @@ export default function BodyWeightTable({data}: {
                     <th className="px-6 py-3 font-medium text-xs uppercase tracking-wide text-neutral-500">
                         Date
                     </th>
+                    <th className="px-6 py-3 font-medium text-xs uppercase tracking-wide text-neutral-500">
+                        Week
+                    </th>
                     <th className="px-6 py-3 font-medium text-xs uppercase tracking-wide text-neutral-500 text-right">
                         Weight
                     </th>
@@ -33,10 +41,13 @@ export default function BodyWeightTable({data}: {
                 </thead>
 
                 <tbody>
-                {paginatedData.map((bodyweight, b) => (
-                    <tr key={b}>
+                {paginatedData.map((bodyweight) => (
+                    <tr key={bodyweight.id}>
                         <td className="border-t border-neutral-800 px-6 py-2.5 text-neutral-200 whitespace-nowrap">
-                            {bodyweight.date.toString()}
+                            {bodyweight.date.toLocaleDateString("nl-NL")}
+                        </td>
+                        <td className="border-t border-neutral-800 px-6 py-2.5 text-neutral-200 whitespace-nowrap">
+                            {getISOWeekKey(bodyweight.date)}
                         </td>
                         <td className="border-t border-neutral-800 px-6 py-2.5 text-neutral-200 text-right whitespace-nowrap">
                             {bodyweight.weight} kg

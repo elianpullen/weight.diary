@@ -3,48 +3,18 @@ import Link from "next/link";
 import {BodyWeight} from "@/models/bodyWeight";
 import WeightCell from "./components/WeightCell";
 import BodyWeightTable from "@/app/bodyweight/components/BodyWeightTable";
+import {getDayIndex, getISOWeekKey} from "@/app/bodyweight/utils/dateUtils";
 
 const DAYS = ["Ma", "Di", "Wo", "Do", "Vr", "Za", "Zo"];
-
-function getISOWeekKey(date: Date): string {
-    const utcDate = new Date(Date.UTC(
-        date.getFullYear(),
-        date.getMonth(),
-        date.getDate()
-    ));
-
-    const dayNumber = utcDate.getUTCDay() || 7;
-
-    utcDate.setUTCDate(
-        utcDate.getUTCDate() + 4 - dayNumber
-    );
-
-    const yearStart = new Date(Date.UTC(utcDate.getUTCFullYear(), 0, 1));
-
-    const week = Math.ceil(
-        (((utcDate.getTime() - yearStart.getTime()) / 86400000) + 1) / 7
-    );
-
-    return `${utcDate.getUTCFullYear()}-${week}`;
-}
-
-function getDayIndex(date: Date): number {
-    const day = date.getDay();
-    return day === 0 ? 6 : day - 1;
-}
 
 export default async function BodyWeightPage() {
     const data = await getBodyWeights();
 
     const weekMap = new Map<string, Map<number, BodyWeight>>();
     for (const entry of data) {
-        const day = entry.date.substring(0, 2);
-        const month = entry.date.substring(3, 5);
-        const year = entry.date.substring(6, 10);
-
-        const d = new Date(Number(year), Number(month) - 1, Number(day));
-        const week = getISOWeekKey(d);
-        const dayIdx = getDayIndex(d);
+        const date = entry.date;
+        const week = getISOWeekKey(date);
+        const dayIdx = getDayIndex(date);
 
         if (!weekMap.has(week)) weekMap.set(week, new Map());
         weekMap.get(week)!.set(dayIdx, entry);

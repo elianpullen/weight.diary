@@ -23,17 +23,10 @@ export async function getBodyWeights(): Promise<BodyWeight[]> {
 
     const data = await res.json();
 
-    return data.map((item: BodyWeight) => ({
+    return data.map((item: BodyWeight): BodyWeight => ({
         id: item.id,
         weight: item.weight,
-        date: new Date(item.date).toLocaleDateString("nl-NL", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-        })
+        date: new Date(item.date),
     }));
 }
 
