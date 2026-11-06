@@ -43,12 +43,9 @@ export default async function BodyWeightPage() {
         return (Math.round(diff * 100) / 100).toFixed(2);
     });
 
-    // grid-template-columns: label kolom + 1 kolom per week
-    const gridCols = `80px repeat(${weeks.length}, 1fr)`;
-
     return (
-        <div className="mx-auto max-w-md space-y-6 p-4">
-            <div className="bg-neutral-900 block max-w-sm p-6 border border-default rounded-xl shadow-xs">
+        <div className="mx-auto w-full max-w-6xl space-y-6 p-4">
+            <div className="w-full min-w-0 bg-neutral-900 p-6 border border-default rounded-xl shadow-xs">
 
                 <div className="flex items-center gap-3 tracking-tight text-heading leading-8">
                     <h1 className="text-xl font-semibold">List of all bodyweights</h1>
@@ -64,9 +61,11 @@ export default async function BodyWeightPage() {
             </div>
 
             <div
-                className="bg-neutral-900 block max-w-sm p-6 border border-default rounded-xl shadow-xs overflow-scroll">
+                className="w-full min-w-0 bg-neutral-900 p-4 border border-default rounded-xl shadow-xs overflow-x-auto">
                 <div className="rounded-lg p-2">
-                    <div className="grid gap-y-1" style={{gridTemplateColumns: gridCols}}>
+                    <div
+                        className="grid gap-y-1 min-w-max"
+                        style={{gridTemplateColumns: `80px repeat(${weeks.length}, 70px)`}}>
                         <div/>
                         {weeks.map((week) => (
                             <div key={week} className="p-2 text-center font-mono text-sm text-neutral-500 font-bold">

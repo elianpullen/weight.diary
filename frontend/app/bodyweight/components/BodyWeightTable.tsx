@@ -25,7 +25,7 @@ export default function BodyWeightTable({data}: {
     
     return (
         <div>
-            <table className="w-full text-sm text-left border-separate border-spacing-0">
+            <table className="w-full table-fixed text-sm text-left border-separate border-spacing-0">
                 <thead>
                 <tr>
                     <th className="px-6 py-3 font-medium text-xs uppercase tracking-wide text-neutral-500">
